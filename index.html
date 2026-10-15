@@ -82,6 +82,7 @@ const st = { get() { try { return JSON.parse(localStorage.getItem(SK) || session
   set(v, keep) { try { (keep ? localStorage : sessionStorage).setItem(SK, JSON.stringify(v)); } catch (_) {} },
   clear() { try { localStorage.removeItem(SK); sessionStorage.removeItem(SK); } catch (_) {} } };
 var LOCK_URL = 'https://script.google.com/macros/s/AKfycbxth4wUujAKFdXIE6ity7lV-F30gheUUI4x06LLWXGGJnDIR8LWKCOwMnCcapWBP9zcuA/exec';
+var EXEMPT_IDS = ['beb043c8ac6738c21cb5d4c8'];
 function deviceId(){ try{ var k='chem6_dev', v=localStorage.getItem(k); if(!v){ v=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)); localStorage.setItem(k,v); } return v; }catch(_){ return 'nostore-'+Math.random().toString(36).slice(2); } }
 async function getIP(){ try{ var c=new AbortController(), t=setTimeout(function(){c.abort();},4000); var r=await fetch('https://api.ipify.org?format=json',{signal:c.signal}); clearTimeout(t); var j=await r.json(); return (j&&j.ip)||''; }catch(_){ return ''; } }
 function deviceGate(id, dev, label, ip){
@@ -96,7 +97,7 @@ function deviceGate(id, dev, label, ip){
     (document.body||document.documentElement).appendChild(s);
   });
 }
-async function enforceDevice(id, label){ var r=await deviceGate(id, deviceId(), label, await getIP()); return !(r && r.ok===false && r.status==='locked'); }
+async function enforceDevice(id, label){ if(EXEMPT_IDS.indexOf(id)>-1) return true; var r=await deviceGate(id, deviceId(), label, await getIP()); return !(r && r.ok===false && r.status==='locked'); }
 async function openWith(raw) {
   const z = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: AU.ub(CT.iv) }, await AU.kimp(raw, ['decrypt']), AU.ub(CT.d));
   const html = await new Response(new Blob([z]).stream().pipeThrough(new DecompressionStream('deflate'))).text();
