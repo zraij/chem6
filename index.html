@@ -81,6 +81,22 @@ const EMB = {"it":150000,"ss":"j+z/WZLw9HadK97OUNUdkw==","u":[{"i":"beb043c8ac67
 const st = { get() { try { return JSON.parse(localStorage.getItem(SK) || sessionStorage.getItem(SK)); } catch (_) { return null; } },
   set(v, keep) { try { (keep ? localStorage : sessionStorage).setItem(SK, JSON.stringify(v)); } catch (_) {} },
   clear() { try { localStorage.removeItem(SK); sessionStorage.removeItem(SK); } catch (_) {} } };
+var LOCK_URL = 'https://script.google.com/macros/s/AKfycbxth4wUujAKFdXIE6ity7lV-F30gheUUI4x06LLWXGGJnDIR8LWKCOwMnCcapWBP9zcuA/exec';
+function deviceId(){ try{ var k='chem6_dev', v=localStorage.getItem(k); if(!v){ v=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)); localStorage.setItem(k,v); } return v; }catch(_){ return 'nostore-'+Math.random().toString(36).slice(2); } }
+async function getIP(){ try{ var c=new AbortController(), t=setTimeout(function(){c.abort();},4000); var r=await fetch('https://api.ipify.org?format=json',{signal:c.signal}); clearTimeout(t); var j=await r.json(); return (j&&j.ip)||''; }catch(_){ return ''; } }
+function deviceGate(id, dev, label, ip){
+  return new Promise(function(resolve){
+    if(!LOCK_URL || LOCK_URL.indexOf('http')!==0){ resolve({ok:true,status:'off'}); return; }
+    var cb='__dg'+Date.now()+Math.floor(Math.random()*1e4), s=document.createElement('script'), done=false;
+    var t=setTimeout(function(){ fin({ok:true,status:'timeout'}); },8000);
+    function fin(r){ if(done)return; done=true; clearTimeout(t); try{delete window[cb];}catch(_){ window[cb]=void 0; } if(s.parentNode)s.parentNode.removeChild(s); resolve(r); }
+    window[cb]=function(r){ fin(r||{ok:true,status:'empty'}); };
+    s.onerror=function(){ fin({ok:true,status:'neterr'}); };
+    s.src=LOCK_URL+'?callback='+cb+'&id='+encodeURIComponent(id)+'&device='+encodeURIComponent(dev)+'&label='+encodeURIComponent(label||'')+'&ip='+encodeURIComponent(ip||'');
+    (document.body||document.documentElement).appendChild(s);
+  });
+}
+async function enforceDevice(id, label){ var r=await deviceGate(id, deviceId(), label, await getIP()); return !(r && r.ok===false && r.status==='locked'); }
 async function openWith(raw) {
   const z = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: AU.ub(CT.iv) }, await AU.kimp(raw, ['decrypt']), AU.ub(CT.d));
   const html = await new Response(new Blob([z]).stream().pipeThrough(new DecompressionStream('deflate'))).text();
@@ -93,7 +109,10 @@ const usersP = AU.fetchUsers(EMB);
   const s = st.get();
   if (s && s.k && s.i) {
     const U = await usersP;
-    if (U.u.some((x) => x.i === s.i)) { try { await openWith(AU.ub(s.k)); return; } catch (_) {} }
+    if (U.u.some((x) => x.i === s.i)) {
+      if (!(await enforceDevice(s.i, ''))) { st.clear(); document.getElementById('e').textContent = 'هذا الحساب مُستخدم على جهاز آخر. راجع الإدارة لتحريره.'; document.getElementById('u').focus(); return; }
+      try { await openWith(AU.ub(s.k)); return; } catch (_) {}
+    }
     st.clear();
   }
   document.getElementById('u').focus();
@@ -105,6 +124,7 @@ document.getElementById('f').onsubmit = async (ev) => {
   try {
     const r = await AU.unwrap(await usersP, document.getElementById('u').value, document.getElementById('p').value);
     if (!r) { er.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة'; f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); b.disabled = false; b.textContent = 'دخول'; return; }
+    if (!(await enforceDevice(r.entry.i, document.getElementById('u').value))) { er.textContent = 'هذا الحساب مُستخدم على جهاز آخر. راجع الإدارة لتحريره.'; f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); b.disabled = false; b.textContent = 'دخول'; return; }
     st.set({ k: AU.bu(r.raw), i: r.entry.i }, document.getElementById('r').checked);
     await openWith(r.raw);
   } catch (x) { er.textContent = 'تعذّر فتح الصفحة على هذا المتصفح، جرّب متصفحاً أحدث.'; b.disabled = false; b.textContent = 'دخول'; }
