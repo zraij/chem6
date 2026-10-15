@@ -85,8 +85,8 @@ async function openWith(raw) {
   const z = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: AU.ub(CT.iv) }, await AU.kimp(raw, ['decrypt']), AU.ub(CT.d));
   const html = await new Response(new Blob([z]).stream().pipeThrough(new DecompressionStream('deflate'))).text();
   var __CR='<div style="position:fixed;left:0;right:0;bottom:0;z-index:2147483647;text-align:center;font:12px/1.7 Cairo,Tahoma,sans-serif;color:#9A9CC0;background:rgba(14,16,32,.82);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:5px 10px;direction:rtl;pointer-events:none">تصميم وبرمجة: <b style=\"color:#A58DFF\">حسام عبدالمنعم</b> · <span dir=\"ltr\">07746451098</span> · © 2026</div>';
-  html = html.indexOf('</body>') > -1 ? html.replace('</body>', __CR + '</body>') : html + __CR;
-  document.open(); document.write(html); document.close();
+  var __out = html.indexOf('</body>') > -1 ? html.replace('</body>', __CR + '</body>') : html + __CR;
+  document.open(); document.write(__out); document.close();
 }
 const usersP = AU.fetchUsers(EMB);
 (async () => {
