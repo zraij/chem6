@@ -92,6 +92,7 @@ ol.steps{margin:6px 0 0;padding-inline-start:20px;color:var(--mu);font-size:13px
 <h1>إدارة الحسابات</h1><p class="s">خاصة بصاحب الموقع</p>
 <label for="lu">اسم المستخدم</label><input class="ltr" id="lu" type="text" autocomplete="username" autocapitalize="none" required>
 <label for="lp">كلمة المرور</label><input class="ltr" id="lp" type="password" autocomplete="current-password" required>
+<label class="rem"><input type="checkbox" id="lr" checked> تذكّرني على هذا الجهاز</label>
 <button id="lb" type="submit">دخول</button><div class="err" id="le"></div>
 </form>
 
@@ -174,9 +175,21 @@ $('#login').onsubmit = async (e) => {
   b.disabled = false; b.textContent = 'دخول';
   if (!r) { $('#le').textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة'; return; }
   if (!r.entry.a) { $('#le').textContent = 'هذا الحساب ما عنده صلاحية إدارة'; return; }
-  K = r.raw; ME = r.entry.i; await initAdminKey(r.entry, AU.norm($('#lu').value), $('#lp').value); $('#login').hidden = true; $('#panel').hidden = false; $('#tok').value = tok() ? '••••••••' : '';
-  await render();
+  K = r.raw; ME = r.entry.i; await initAdminKey(r.entry, AU.norm($('#lu').value), $('#lp').value);
+  ss.set({ k: AU.bu(K), i: ME, a: A ? AU.bu(A) : '' }, $('#lr').checked); await enter();
 };
+async function enter() { $('#login').hidden = true; $('#panel').hidden = false; $('#tok').value = tok() ? '••••••••' : ''; await render(); }
+// «تذكّرني»: يحفظ مفاتيح الجلسة على هذا الجهاز فقط، وتنمسح عند الضغط على «خروج»
+const SK = 'chem.admin.s', ss = { get() { try { return JSON.parse(localStorage.getItem(SK) || sessionStorage.getItem(SK)); } catch (_) { return null; } },
+  set(v, keep) { try { (keep ? localStorage : sessionStorage).setItem(SK, JSON.stringify(v)); } catch (_) {} },
+  clear() { try { localStorage.removeItem(SK); sessionStorage.removeItem(SK); } catch (_) {} } };
+(async () => {
+  const s = ss.get(); if (!s || !s.k || !s.i) return;
+  U = await loadUsers(); const e = U.u.find((x) => x.i === s.i);
+  if (!e || !e.a) return ss.clear();
+  try { K = AU.ub(s.k); await AU.meta(K, e); } catch (_) { K = null; return ss.clear(); }
+  ME = s.i; A = s.a ? AU.ub(s.a) : null; await enter();
+})();
 async function render() {
   for (const e of U.u) if (!metas.has(e.i)) { try { metas.set(e.i, await AU.meta(K, e)); } catch (_) { metas.set(e.i, { u: '?', n: '?' }); } }
   if (A) for (const e of U.u) if (e.p && !pws.has(e.i)) { try { pws.set(e.i, TD.decode(await unseal(await aKey(), e.p, e.i + ':p'))); } catch (_) {} }
@@ -234,7 +247,7 @@ $('#save').onclick = async () => {
   } catch (x) { msg(sm, 'ما انحفظ: ' + x.message); }
   b.disabled = false; b.textContent = 'حفظ التغييرات على الموقع';
 };
-$('#out').onclick = () => location.reload();
+$('#out').onclick = () => { ss.clear(); location.reload(); };
 window.addEventListener('beforeunload', (e) => { if (pend) { e.preventDefault(); e.returnValue = ''; } });
 </script>
 <footer style="text-align:center;margin:28px auto 16px;color:#9A9CC0;font-size:12px;line-height:2">تصميم وبرمجة: <b style="color:#A58DFF">حسام عبدالمنعم</b> · <span dir="ltr">📱 07746451098</span><br>© 2026 — جميع الحقوق محفوظة</footer>
