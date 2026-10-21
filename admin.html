@@ -75,7 +75,7 @@ a{color:var(--c2)}
 .row{display:flex;gap:8px;align-items:center}.row input{flex:1}
 table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:10px 8px;border-bottom:1px solid var(--ln);text-align:right}th{color:var(--mu);font-size:13px}
 td.u{direction:ltr;text-align:right;font-family:"Segoe UI",Tahoma,sans-serif}td .tag{font-size:12px;padding:2px 8px;border-radius:99px;background:#A58DFF33;color:var(--c1)}
-td button{padding:6px 10px;font-size:13px}td.pw{direction:ltr;text-align:right;font-family:"Segoe UI",Tahoma,sans-serif}td.pw span{display:inline-block;min-width:90px}td .na{color:var(--mu);font-size:13px}td.act{display:flex;gap:6px;flex-wrap:wrap}
+td button{padding:6px 10px;font-size:13px}td.pwc{white-space:nowrap}td .pwin{width:150px;padding:6px 10px;font-size:14px}td .pw{direction:ltr;display:inline-block;font-family:"Segoe UI",Tahoma,sans-serif;min-width:96px;text-align:left}
 .bar{position:sticky;bottom:12px;margin-top:16px;display:none;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--p2);border:1px solid var(--c3);border-radius:16px;padding:12px 16px;box-shadow:0 10px 30px #0008}
 .bar.on{display:flex}.bar b{color:var(--c3)}
 .cred{margin-top:12px;background:var(--p2);border:1px dashed var(--c6);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.9;display:none;white-space:pre-line}
@@ -83,7 +83,10 @@ td button{padding:6px 10px;font-size:13px}td.pw{direction:ltr;text-align:right;f
 ol.steps{margin:6px 0 0;padding-inline-start:20px;color:var(--mu);font-size:13px;line-height:1.9}
 .msg{margin-top:8px;font-size:14px;min-height:20px}.msg.ok{color:var(--c6)}.msg.bad{color:var(--c4)}
 .empty{color:var(--mu);text-align:center;padding:16px}
-@media(max-width:600px){table{display:block;overflow-x:auto;white-space:nowrap}.card{padding:16px}header h1{font-size:20px}.bar{flex-direction:column;align-items:stretch}.bar .row{justify-content:stretch}.bar .row button{flex:1}}
+td .tag.scr{background:#33C6C633;color:var(--c2)}
+.g3{display:grid;grid-template-columns:1.3fr 1fr 1.2fr;gap:0 12px}@media(max-width:760px){.g3{grid-template-columns:1fr}}
+#scrf button[type=submit]{margin-top:14px}
+@media(max-width:600px){thead{display:none}table,tbody,tr,td{display:block}tr{border-bottom:1px solid var(--ln);padding:10px 0}td{border:0;padding:3px 0}td.u{text-align:right}td.pwc{white-space:normal;display:flex;flex-wrap:wrap;gap:6px;align-items:center}td.pwc .pwin{flex:1 1 100%;width:100%}.card{padding:16px}header h1{font-size:20px}.bar{flex-direction:column;align-items:stretch}.bar .row{justify-content:stretch}.bar .row button{flex:1}}
 </style>
 </head><body><div class="wrap">
 
@@ -126,12 +129,22 @@ ol.steps{margin:6px 0 0;padding-inline-start:20px;color:var(--mu);font-size:13px
     <div class="msg" id="nm"></div>
   </div>
 </div>
+<form class="card" id="scrf" style="margin-top:14px">
+  <h2>🖥️ إضافة شاشة تفاعلية</h2>
+  <p class="hint">حساب خاص بشاشة الصف حتى ما تنقفل حسابات الأساتذة على الشاشة. ينربط بأول شاشة يُفتح عليها، ويبقى مسجّل دخول عليها دائماً. سوّ حساب لكل شاشة.</p>
+  <div class="g3">
+    <div><label for="sn">اسم الشاشة / القاعة</label><input id="sn" type="text" placeholder="مثلاً: شاشة قاعة 3"></div>
+    <div><label for="su">اسم المستخدم</label><input class="ltr" id="su" type="text" autocapitalize="none" spellcheck="false"></div>
+    <div><label for="sp">كلمة المرور</label><div class="row"><input class="ltr" id="sp" type="text" spellcheck="false" autocomplete="off"><button class="ghost" type="button" id="sgen">توليد</button></div></div>
+  </div>
+  <button type="submit" style="width:100%">إضافة الشاشة</button>
+  <div class="msg" id="smsg"></div>
+  <div class="cred" id="scred"></div>
+</form>
 <div class="card" style="margin-top:14px">
   <h2>الحسابات (<span id="cnt">0</span>)</h2>
   <p class="hint">حذف الحساب يمنع دخوله، ويخرجه تلقائياً من أي جهاز كان مسجّل عليه بعد ما ينحفظ التغيير.</p>
-  <p class="hint" id="pwh"></p>
-  <table><thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>كلمة المرور</th><th>أُضيف</th><th></th></tr></thead><tbody id="list"></tbody></table>
-  <div class="cred" id="cred2"></div>
+  <table><thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>أُضيف</th><th>كلمة المرور</th><th></th></tr></thead><tbody id="list"></tbody></table>
 </div>
 <div class="bar" id="bar"><span>عندك <b id="pend">0</b> تغيير غير محفوظ</span><div class="row"><button class="ghost" type="button" id="dl">تنزيل الملف</button><button type="button" id="save">حفظ التغييرات على الموقع</button></div><div class="msg" id="sm" style="width:100%"></div></div>
 </main>
@@ -140,28 +153,24 @@ ol.steps{margin:6px 0 0;padding-inline-start:20px;color:var(--mu);font-size:13px
 const OWNER = 'zraij', REPO = 'chem6', EMB = {"it":150000,"ss":"j+z/WZLw9HadK97OUNUdkw==","u":[{"i":"beb043c8ac6738c21cb5d4c8","a":1,"s":"0OWrrfOhkgJsKDNsSg9Gyg==","v":"3iW0tXzfernBKeTS","k":"qXe7pqy46ltMWbRgz3LmaCpZQjSN/V6JnyyulG5wZf0iTW3GnDPIP3zazfDD+WIy","m":"JDbS+9EiXHj/uYCO.1WALEORmyS5hGTIzriF7X2R8Y2515tNgLdEySuxpq4eadKJ5Kz8iX7m6L1FXCezLRh9+3bhRf27a4w9tCCSzmmbiEjqN4/bpururOBdlrg=="},{"i":"44bba213e59e903470e30a82","a":0,"s":"uWU60WOntbaroanl+btJjQ==","v":"Qup3mgKfnTYdaUUC","k":"P8T4Hw97tFmZGBzzho6GS8sbIgpJCRLlrtD4NyZwsSlwWyg0aJ8Z6e4mN5bM2fuZ","m":"UafcrcRWnKT0KCpj.u+PNftFXswtl6/+0ysTDF688g04OSuY5/ZtpUMam4iqquXVIQSLspGBA6yeLZnRZJjygKclwVGTYoOxX6JAHjqcqPPCPcDywJg=="}]}, TK = 'chem.gh.token';
 const API = `https://api.github.com/repos/${OWNER}/${REPO}/contents/users.json`;
 const $ = (s) => document.querySelector(s);
-let U = null, K = null, ME = null, A = null, metas = new Map(), pws = new Map(), pend = 0;
-// كلمات المرور تنحفظ مشفّرة بمفتاح إدارة (A) ما يملكه إلا المدراء: كل مدير عنده نسخة من A مشفّرة بكلمة مروره (حقل x)،
-// وكل حساب عنده كلمة مروره مشفّرة بـ A (حقل p). الأساتذة ما يكدرون يفكّونها لأن مفتاح المحتوى K ما يفتح A.
-const TE = new TextEncoder(), TD = new TextDecoder();
-async function pwKey(u, pw, salt) {
-  const base = await crypto.subtle.importKey('raw', TE.encode(u + ':' + pw), 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: U.it, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
-}
-const aKey = () => crypto.subtle.importKey('raw', A, 'AES-GCM', false, ['encrypt', 'decrypt']);
-async function seal(key, data, ad) { const iv = AU.rnd(12); return AU.bu(iv) + '.' + AU.bu(await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: TE.encode(ad) }, key, data)); }
-async function unseal(key, s, ad) { const [iv, ct] = s.split('.'); return new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: AU.ub(iv), additionalData: TE.encode(ad) }, key, AU.ub(ct))); }
-async function secure(ent, u, pw) {
-  delete ent.p; delete ent.x;
-  if (A) { ent.p = await seal(await aKey(), TE.encode(pw), ent.i + ':p'); if (ent.a) ent.x = await seal(await pwKey(u, pw, AU.ub(ent.s)), A, ent.i + ':x'); }
-  return ent;
-}
-// كلمة مرور جديدة لحساب موجود مع الإبقاء على اسمه وتاريخ إضافته وصلاحيته
-async function rewrap(e, u, pw) { const f = await AU.makeEntry(U, K, u, pw, '', e.a); return secure({ ...e, s: f.s, v: f.v, k: f.k }, u, pw); }
-async function initAdminKey(e, u, pw) {
-  if (e.x) { try { A = await unseal(await pwKey(u, pw, AU.ub(e.s)), e.x, e.i + ':x'); } catch (_) { A = null; } }
-  else if (!U.u.some((x) => x.x)) { A = AU.rnd(32); await secure(e, u, pw); bump(); }
-}
+let U = null, K = null, ME = null, metas = new Map(), pend = 0;
+// Password vault: AK is an admin-only key (wrapped per admin with their own password in entry.x).
+// Each account's password is kept as entry.p = AES-GCM(AK, password). Teachers only ever get K, never AK,
+// so they cannot read anyone's password.
+let AK = null, editing = null; const te = new TextEncoder(), td = new TextDecoder(), shown = new Set();
+async function wk(u, pw, e, use) { const base = await crypto.subtle.importKey('raw', te.encode(u + ':' + pw), 'PBKDF2', false, ['deriveKey']); return crypto.subtle.deriveKey({ name: 'PBKDF2', salt: AU.ub(e.s), iterations: U.it, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, [use]); }
+async function seal(key, data, ad) { const iv = AU.rnd(12); return AU.bu(iv) + '.' + AU.bu(await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: te.encode(ad) }, key, data)); }
+async function unseal(key, str, ad) { const [iv, ct] = str.split('.'); return new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: AU.ub(iv), additionalData: te.encode(ad) }, key, AU.ub(ct))); }
+const akKey = (use) => crypto.subtle.importKey('raw', AK, 'AES-GCM', false, use);
+async function wrapAK(ent, u, pw) { if (AK) ent.x = await seal(await wk(AU.norm(u), pw, ent, 'encrypt'), AK, ent.i + ':x'); }
+async function setPw(ent, pw) { if (AK) ent.p = await seal(await akKey(['encrypt']), te.encode(pw), ent.i + ':p'); }
+async function getPw(ent) { if (!ent.p || !AK) return null; try { return td.decode(await unseal(await akKey(['decrypt']), ent.p, ent.i + ':p')); } catch (_) { return null; } }
+const siteUrl = () => location.href.replace(/admin\.html.*$/, '').replace(/[?#].*$/, '');
+const credText = (n, u, p, scr) => scr
+  ? `حساب الشاشة التفاعلية «${n}» على موقع «كيمياء السادس العلمي»:\nرابط التثبيت: ${siteUrl()}install.html\nاسم المستخدم: ${u}\nكلمة المرور: ${p}\nطريقة التشغيل على الشاشة:\n1) افتح الرابط بمتصفح Chrome على الشاشة واضغط «تثبيت التطبيق».\n2) افتح التطبيق من أيقونته وسجّل الدخول، ويبقى محفوظاً.\nملاحظة: هذا الحساب ينربط بهذه الشاشة فقط، فلا تستخدمه على الموبايل.`
+  : `هلا ${n} 🌷\nهذا حسابك على موقع «كيمياء السادس العلمي»:\nرابط التثبيت: ${siteUrl()}install.html\nاسم المستخدم: ${u}\nكلمة المرور: ${p}\nملاحظة: الحساب يشتغل على جهاز واحد فقط. افتح الرابط من الجهاز اللي راح تستعمله، ثبّت التطبيق، ثم سجّل الدخول من داخل التطبيق.`;
+async function copyText(t) { try { await navigator.clipboard.writeText(t); return true; } catch (_) { const a = document.createElement('textarea'); a.value = t; a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (_) {} a.remove(); return ok; } }
+function showCred(n, u, p, scr, box = '#cred') { const c = $(box), t = credText(n, u, p, scr); c.innerHTML = `${esc(t)}<div style="margin-top:8px"><button class="ghost" type="button">نسخ الرسالة</button></div>`; c.classList.add('on'); const b = c.querySelector('button'); b.onclick = async () => { b.textContent = (await copyText(t)) ? 'انتسخت ✓' : 'انسخها يدوياً'; }; }
 const tok = () => { try { return localStorage.getItem(TK) || ''; } catch (_) { return ''; } };
 const msg = (el, t, ok) => { el.textContent = t; el.className = 'msg ' + (ok ? 'ok' : 'bad'); };
 const gh = (url, opt = {}) => fetch(url, { ...opt, headers: { Authorization: 'Bearer ' + tok(), Accept: 'application/vnd.github+json', ...(opt.headers || {}) } });
@@ -175,34 +184,48 @@ $('#login').onsubmit = async (e) => {
   b.disabled = false; b.textContent = 'دخول';
   if (!r) { $('#le').textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة'; return; }
   if (!r.entry.a) { $('#le').textContent = 'هذا الحساب ما عنده صلاحية إدارة'; return; }
-  K = r.raw; ME = r.entry.i; await initAdminKey(r.entry, AU.norm($('#lu').value), $('#lp').value);
-  ss.set({ k: AU.bu(K), i: ME, a: A ? AU.bu(A) : '' }, $('#lr').checked); await enter();
+  K = r.raw; ME = r.entry.i;
+  const lu = AU.norm($('#lu').value), lp = $('#lp').value;
+  if (r.entry.x) { try { AK = await unseal(await wk(lu, lp, r.entry, 'decrypt'), r.entry.x, r.entry.i + ':x'); } catch (_) { AK = null; } }
+  else if (!U.u.some((x) => x.p)) { AK = AU.rnd(32); await wrapAK(r.entry, lu, lp); bump(); }
+  sess.set({ k: AU.bu(K), a: AK ? AU.bu(AK) : '', i: ME }, $('#lr').checked);
+  await openPanel();
 };
-async function enter() { $('#login').hidden = true; $('#panel').hidden = false; $('#tok').value = tok() ? '••••••••' : ''; await render(); }
-// «تذكّرني»: يحفظ مفاتيح الجلسة على هذا الجهاز فقط، وتنمسح عند الضغط على «خروج»
-const SK = 'chem.admin.s', ss = { get() { try { return JSON.parse(localStorage.getItem(SK) || sessionStorage.getItem(SK)); } catch (_) { return null; } },
+async function openPanel() { $('#login').hidden = true; $('#panel').hidden = false; $('#tok').value = tok() ? '••••••••' : ''; await render(); fillScreen(); }
+// "remember me": the admin's keys stay on this device (localStorage) or this tab only (sessionStorage)
+const SK = 'chem.admin.s';
+const sess = { get() { try { return JSON.parse(localStorage.getItem(SK) || sessionStorage.getItem(SK)); } catch (_) { return null; } },
   set(v, keep) { try { (keep ? localStorage : sessionStorage).setItem(SK, JSON.stringify(v)); } catch (_) {} },
   clear() { try { localStorage.removeItem(SK); sessionStorage.removeItem(SK); } catch (_) {} } };
 (async () => {
-  const s = ss.get(); if (!s || !s.k || !s.i) return;
-  U = await loadUsers(); const e = U.u.find((x) => x.i === s.i);
-  if (!e || !e.a) return ss.clear();
-  try { K = AU.ub(s.k); await AU.meta(K, e); } catch (_) { K = null; return ss.clear(); }
-  ME = s.i; A = s.a ? AU.ub(s.a) : null; await enter();
+  const st = sess.get(); if (!st || !st.k || !st.i) return;
+  try {
+    U = await loadUsers(); const e = U.u.find((x) => x.i === st.i && x.a); if (!e) throw 0;
+    K = AU.ub(st.k); metas.set(e.i, await AU.meta(K, e)); ME = e.i; AK = st.a ? AU.ub(st.a) : null;
+    const probe = U.u.find((x) => x.p); if (AK && probe && (await getPw(probe)) === null) AK = null;
+    await openPanel();
+  } catch (_) { sess.clear(); U = null; K = null; ME = null; AK = null; metas.clear(); }
 })();
 async function render() {
   for (const e of U.u) if (!metas.has(e.i)) { try { metas.set(e.i, await AU.meta(K, e)); } catch (_) { metas.set(e.i, { u: '?', n: '?' }); } }
-  if (A) for (const e of U.u) if (e.p && !pws.has(e.i)) { try { pws.set(e.i, TD.decode(await unseal(await aKey(), e.p, e.i + ':p'))); } catch (_) {} }
   $('#cnt').textContent = U.u.length;
-  $('#pwh').textContent = A ? 'كلمات المرور القديمة ما كانت تنحفظ، فتظهر «غير محفوظة» لحد ما تغيّرها من زر «تغيير كلمة المرور».' : 'ما تكدر تشوف كلمات المرور من هذا الحساب لحد ما يغيّر مدير آخر كلمة مرورك. تكدر تغيّر كلمات المرور عادي.';
-  $('#list').innerHTML = U.u.map((e) => { const m = metas.get(e.i), pw = pws.get(e.i); return `<tr><td>${esc(m.n)} ${e.a ? '<span class="tag">مدير</span>' : ''}</td><td class="u">${esc(m.u)}</td><td class="pw">${pw !== undefined ? `<span data-v="${esc(pw)}">••••••••</span> <button class="ghost" data-ps>إظهار</button>` : '<span class="na">غير محفوظة</span>'}</td><td>${esc(m.t || '')}</td><td class="act"><button class="ghost" data-pc="${e.i}">تغيير كلمة المرور</button>${e.i === ME ? '<span style="color:var(--mu);font-size:13px;align-self:center">أنت</span>' : `<button class="danger" data-d="${e.i}">حذف</button>`}</td></tr>`; }).join('') || '<tr><td colspan="5" class="empty">لا توجد حسابات</td></tr>';
-  $$('[data-ps]').forEach((b) => b.onclick = () => { const sp = b.previousElementSibling, on = b.textContent === 'إظهار'; sp.textContent = on ? sp.dataset.v : '••••••••'; b.textContent = on ? 'إخفاء' : 'إظهار'; });
-  $$('[data-pc]').forEach((b) => b.onclick = async () => {
-    const id = b.dataset.pc, m = metas.get(id), p = prompt(`كلمة المرور الجديدة لـ ${m.n}:`, genPw());
-    if (p === null) return; if (p.length < 6) return msg($('#am'), 'كلمة المرور قصيرة (6 أحرف على الأقل)');
-    b.disabled = true; const i = U.u.findIndex((x) => x.i === id); U.u[i] = await rewrap(U.u[i], m.u, p); pws.set(id, p);
-    bump(); await render(); const c = $('#cred2'); c.textContent = `تغيّرت كلمة مرور ${m.n} (اضغط «حفظ التغييرات» حتى تتفعّل):\nاسم المستخدم: ${m.u}\nكلمة المرور: ${p}`; c.classList.add('on');
-  });
+  const pws = new Map(); for (const e of U.u) pws.set(e.i, await getPw(e));
+  $('#list').innerHTML = U.u.map((e) => { const m = metas.get(e.i), pw = pws.get(e.i), me = e.i === ME;
+    const pcell = me ? '<span style="color:var(--mu);font-size:13px">—</span>' : pw ? `<span class="pw">${shown.has(e.i) ? esc(pw) : '••••••'}</span> <button class="ghost" data-s="${e.i}">${shown.has(e.i) ? 'إخفاء' : 'إظهار'}</button> <button class="ghost" data-c="${e.i}">نسخ الرسالة</button> <button class="ghost" data-e="${e.i}">تغيير</button>` : `<span style="color:var(--mu);font-size:13px">غير محفوظة</span> <button class="ghost" data-e="${e.i}">تغيير</button>`;
+    const ecell = `<input class="ltr pwin" id="pwin" type="text" spellcheck="false" autocomplete="off" minlength="6" value="${esc(pw || '')}" placeholder="كلمة المرور الجديدة"> <button class="ghost" data-g="1">توليد</button> <button data-ps="${e.i}">حفظ</button> <button class="ghost" data-x="1">إلغاء</button>`;
+    return `<tr><td>${esc(m.n)} ${e.a ? '<span class="tag">مدير</span>' : ''}${e.d ? '<span class="tag scr">شاشة</span>' : ''}</td><td class="u">${esc(m.u)}</td><td>${esc(m.t || '')}</td><td class="pwc">${editing === e.i && !me ? ecell : pcell}</td><td>${me ? '<span style="color:var(--mu);font-size:13px">أنت</span>' : `<button class="danger" data-d="${e.i}">حذف</button>`}</td></tr>`; }).join('') || '<tr><td colspan="5" class="empty">لا توجد حسابات</td></tr>';
+  $$('[data-s]').forEach((b) => b.onclick = () => { const i = b.dataset.s; shown.has(i) ? shown.delete(i) : shown.add(i); render(); });
+  $$('[data-c]').forEach((b) => b.onclick = async () => { const m = metas.get(b.dataset.c); b.textContent = (await copyText(credText(m.n, m.u, pws.get(b.dataset.c), (U.u.find((x) => x.i === b.dataset.c) || {}).d))) ? 'انتسخت ✓' : 'تعذّر النسخ'; setTimeout(() => { b.textContent = 'نسخ الرسالة'; }, 2000); });
+  $$('[data-e]').forEach((b) => b.onclick = () => { if (!AK) return msg($('#am'), 'ما تكدر تحفظ كلمات المرور من هذا الحساب'); editing = b.dataset.e; render().then(() => { const i = $('#pwin'); if (i) { i.focus(); i.select(); } }); });
+  $$('[data-x]').forEach((b) => b.onclick = () => { editing = null; render(); });
+  $$('[data-g]').forEach((b) => b.onclick = () => { $('#pwin').value = genPw(); });
+  $$('[data-ps]').forEach((b) => b.onclick = async () => {
+    const old = U.u.find((x) => x.i === b.dataset.ps), m = metas.get(old.i), np = $('#pwin').value.trim();
+    if (np.length < 6) return msg($('#am'), 'كلمة المرور قصيرة (6 أحرف على الأقل)');
+    if (np === pws.get(old.i)) { editing = null; return render(); }
+    const ent = await AU.makeEntry(U, K, m.u, np, m.n, old.a); if (old.d) ent.d = 1;
+    await setPw(ent, np); if (ent.a) await wrapAK(ent, m.u, np); U.u[U.u.indexOf(old)] = ent; metas.set(ent.i, { ...m, t: new Date().toISOString().slice(0, 10) }); shown.add(ent.i); editing = null;
+    bump(); await render(); msg($('#am'), `تغيّرت كلمة مرور ${m.n} (القديمة تبطل بعد الحفظ)، اضغط «حفظ التغييرات» ثم أرسلها`, true); showCred(m.n, m.u, np, old.d); });
   $$('[data-d]').forEach((b) => b.onclick = () => { const m = metas.get(b.dataset.d); if (!b.dataset.c) { b.dataset.c = 1; b.textContent = 'تأكيد الحذف؟'; return; } U.u = U.u.filter((x) => x.i !== b.dataset.d); bump(); render(); msg($('#am'), `حُذف ${m.n}، اضغط حفظ`, true); });
   $('#pend').textContent = pend; $('#bar').classList.toggle('on', pend > 0);
 }
@@ -216,10 +239,24 @@ $('#addf').onsubmit = async (e) => {
   if (!/^[a-z0-9._-]{3,30}$/.test(u)) return msg($('#am'), 'اسم المستخدم لازم يكون إنكليزي (حروف وأرقام و . _ -) من 3 أحرف أو أكثر');
   if (p.length < 6) return msg($('#am'), 'كلمة المرور قصيرة (6 أحرف على الأقل)');
   const id = await AU.uidOf(U, u); if (U.u.some((x) => x.i === id)) return msg($('#am'), 'اسم المستخدم موجود مسبقاً');
-  const ent = await secure(await AU.makeEntry(U, K, u, p, n, $('#aa').checked), u, p); U.u.push(ent); metas.set(ent.i, { u, n, t: new Date().toISOString().slice(0, 10) }); pws.set(ent.i, p);
+  const ent = await AU.makeEntry(U, K, u, p, n, $('#aa').checked); await setPw(ent, p); if (ent.a) await wrapAK(ent, u, p); U.u.push(ent); metas.set(ent.i, { u, n, t: new Date().toISOString().slice(0, 10) });
   bump(); await render(); msg($('#am'), `أُضيف ${n}، لا تنسى تضغط «حفظ التغييرات»`, true);
-  const c = $('#cred'); c.textContent = `معلومات الدخول للأستاذ ${n}:\nالرابط: ${location.href.replace(/admin\.html.*$/, '')}\nاسم المستخدم: ${u}\nكلمة المرور: ${p}`; c.classList.add('on');
+  showCred(n, u, p, 0);
   $('#an').value = ''; $('#au').value = ''; $('#ap').value = ''; $('#aa').checked = false;
+};
+// حسابات الشاشات التفاعلية: حساب عادي (بدون إدارة) عليه علامة d=1، يبقى مسجّل دخول دائماً على الشاشة
+function nextScreenUser() { let n = 0; for (const m of metas.values()) { const x = /^screen(\d+)$/.exec((m && m.u) || ''); if (x) n = Math.max(n, +x[1]); } return 'screen' + (n + 1); }
+function fillScreen() { if (!$('#su').value) $('#su').value = nextScreenUser(); if (!$('#sp').value) $('#sp').value = genPw(); }
+$('#sgen').onclick = () => { $('#sp').value = genPw(); };
+$('#scrf').onsubmit = async (e) => {
+  e.preventDefault(); const n = $('#sn').value.trim(), u = AU.norm($('#su').value), p = $('#sp').value.trim();
+  if (!n) return msg($('#smsg'), 'اكتب اسم الشاشة أو القاعة');
+  if (!/^[a-z0-9._-]{3,30}$/.test(u)) return msg($('#smsg'), 'اسم المستخدم لازم يكون إنكليزي (حروف وأرقام و . _ -) من 3 أحرف أو أكثر');
+  if (p.length < 6) return msg($('#smsg'), 'كلمة المرور قصيرة (6 أحرف على الأقل)');
+  const id = await AU.uidOf(U, u); if (U.u.some((x) => x.i === id)) return msg($('#smsg'), 'اسم المستخدم موجود مسبقاً');
+  const ent = await AU.makeEntry(U, K, u, p, n, false); ent.d = 1; await setPw(ent, p); U.u.push(ent); metas.set(ent.i, { u, n, t: new Date().toISOString().slice(0, 10) });
+  bump(); await render(); msg($('#smsg'), `أُضيفت ${n}، لا تنسى تضغط «حفظ التغييرات»`, true); showCred(n, u, p, 1, '#scred');
+  $('#sn').value = ''; $('#su').value = ''; $('#sp').value = ''; fillScreen();
 };
 $('#tokSave').onclick = async () => {
   const v = $('#tok').value.trim(); if (!v || v.startsWith('•')) return;
@@ -230,8 +267,8 @@ $('#tokSave').onclick = async () => {
 };
 $('#npb').onclick = async () => {
   const p = $('#np').value; if (p.length < 8) return msg($('#nm'), '8 أحرف على الأقل');
-  const m = metas.get(ME), i = U.u.findIndex((x) => x.i === ME);
-  U.u[i] = await rewrap(U.u[i], m.u, p); pws.set(ME, p); bump(); await render(); $('#np').value = ''; msg($('#nm'), 'تغيّرت، اضغط «حفظ التغييرات» حتى تتفعّل', true);
+  const m = metas.get(ME), old = U.u.find((x) => x.i === ME), ent = await AU.makeEntry(U, K, m.u, p, m.n, true);
+  await wrapAK(ent, m.u, p); U.u[U.u.indexOf(old)] = ent; bump(); await render(); $('#np').value = ''; msg($('#nm'), 'تغيّرت، اضغط «حفظ التغييرات» حتى تتفعّل', true);
 };
 $('#dl').onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(U)], { type: 'application/json' })); a.download = 'users.json'; a.click(); };
 $('#save').onclick = async () => {
@@ -247,7 +284,7 @@ $('#save').onclick = async () => {
   } catch (x) { msg(sm, 'ما انحفظ: ' + x.message); }
   b.disabled = false; b.textContent = 'حفظ التغييرات على الموقع';
 };
-$('#out').onclick = () => { ss.clear(); location.reload(); };
+$('#out').onclick = () => { if (pend && !confirm('عندك تغييرات غير محفوظة، تطلع؟')) return; pend = 0; sess.clear(); location.reload(); };
 window.addEventListener('beforeunload', (e) => { if (pend) { e.preventDefault(); e.returnValue = ''; } });
 </script>
 <footer style="text-align:center;margin:28px auto 16px;color:#9A9CC0;font-size:12px;line-height:2">تصميم وبرمجة: <b style="color:#A58DFF">حسام عبدالمنعم</b> · <span dir="ltr">📱 07746451098</span><br>© 2026 — جميع الحقوق محفوظة</footer>
